@@ -23,16 +23,14 @@ class todosControllers extends controller_dto_1.TodoRequests {
         super();
         this.post_todos = async function (req, res) {
             try {
-                let newTodo = '';
-                req.on("data", (chunk) => {
-                    newTodo += chunk;
-                });
+                let todo_chunk = "";
+                req.on("data", (chunk) => { todo_chunk += chunk; });
                 req.on("end", async () => {
                     try {
-                        let todo = JSON.parse(newTodo);
-                        let todos = await (0, readFile_1.readTodo)("todos.json");
-                        const validator = (0, validators_1.todoValidator)(todo);
-                        if (validator) {
+                        const todo = JSON.parse(todo_chunk);
+                        const todos = await ((0, readFile_1.readTodo)("todos.json"));
+                        const validation_todo = new validators_1.todoValidation();
+                        if (validation_todo.validation_create(todo)) {
                             const token = req.headers.token;
                             const verify_token = verifyToken(token);
                             todo.todo_title = (todo.todo_title.toLowerCase());
@@ -46,27 +44,19 @@ class todosControllers extends controller_dto_1.TodoRequests {
                             const result = {
                                 message: "Todo is saved",
                                 status: 201,
+                                todo
                             };
                             res.statusCode = 201;
                             res.end(JSON.stringify(result));
                         }
-                        ;
                     }
                     catch (error) {
-                        let err = {
-                            message: error.message,
-                            status: error.status,
-                        };
-                        (0, errors_1.GlobalError)(res, err);
+                        (0, errors_1.GlobalError)(res, error);
                     }
                 });
             }
             catch (error) {
-                let err = {
-                    message: error.message,
-                    status: error.status,
-                };
-                (0, errors_1.GlobalError)(res, err);
+                (0, errors_1.GlobalError)(res, error);
             }
         };
         this.get_todos = async function (req, res) {
@@ -105,39 +95,33 @@ class todosControllers extends controller_dto_1.TodoRequests {
                 (0, errors_1.GlobalError)(res, err);
             }
         };
-        this.delete_todo = async function (req, res, reqUrl) {
+        this.delete_todo = async function (req, res) {
             try {
-                try {
-                    let todos = await (0, readFile_1.readFile)("todos.json");
-                    let user = verifyToken(req.headers.token);
-                    let todo = todos.find((u) => {
-                        let id = req.url?.split("/").at(-1);
-                        if (u.user_id == id)
-                            return u;
-                    });
-                    let id = req.url?.split("/").at(-1);
-                    if (user.user_id == todo?.user_id) {
-                        let ChangedTodos = todos.filter((u) => u.user_id !== id);
-                        await (0, writeFile_1.writeTodo)("todos.json", ChangedTodos);
-                        res.setHeader('Content-Type', 'application/json');
-                        return res.end(JSON.stringify({ message: "Todo deleted", status: 200 }));
-                    }
-                    ;
-                }
-                catch (error) {
-                    let err = {
-                        message: error.message,
-                        status: error.status,
-                    };
-                    (0, errors_1.GlobalError)(res, err);
-                }
+                const todos = await ((0, readFile_1.readTodo)("todos.json"));
+                const todo_id = Number(req.url.trim().split("/").at(-1));
+                if (!todo_id)
+                    throw new errors_1.ClientError("NOT FOUND", 404);
+                const find_index_todo = todos.findIndex((t) => t.todo_id == todo_id);
+                if (find_index_todo == -1)
+                    throw new errors_1.ClientError("NOT FOUND", 404);
+                const token = req.headers.token;
+                const verify_token = verifyToken(token);
+                const todo = todos[find_index_todo];
+                if (todo.user_id != verify_token.user_id)
+                    throw new errors_1.ClientError("Todo is not deleted", 400);
+                todos.splice(find_index_todo, 1);
+                const delete_todo = await (0, writeFile_1.writeTodo)("todos.json", todos);
+                if (!delete_todo)
+                    throw new errors_1.ServerError("Todo is not deleted");
+                const result = {
+                    message: "Todo is deleted",
+                    status: 200,
+                };
+                res.statusCode = 200;
+                res.end(JSON.stringify(result));
             }
             catch (error) {
-                let err = {
-                    message: error.message,
-                    status: error.status,
-                };
-                (0, errors_1.GlobalError)(res, err);
+                (0, errors_1.GlobalError)(res, error);
             }
         };
     }

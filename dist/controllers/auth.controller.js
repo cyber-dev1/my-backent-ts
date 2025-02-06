@@ -32,11 +32,11 @@ class AuthController extends controller_dto_1.Auth {
                             users.push(user);
                             let writeUser = await (0, writeFile_1.writeFile)("users.json", users);
                             if (writeUser)
-                                return res.end(JSON.stringify({ message: "User successfully registered !", status: 201, accessToken: createToken({ user_id: user.user_id, userAgent: req.headers["user-agent"] }) }));
+                                return res.end(JSON.stringify({ message: "User successfully registered !", status: 201, accessToken: createToken({ user_id: user.id, userAgent: req.headers["user-agent"] }) }));
                             else
                                 throw new errors_1.ServerError("user not saved yet !");
                         }
-                        return res.end(JSON.stringify({ status: "Success" }));
+                        ;
                     }
                     catch (error) {
                         let err = {
@@ -71,7 +71,7 @@ class AuthController extends controller_dto_1.Auth {
                             if (!findUser)
                                 throw new errors_1.ClientError("User not found !", 404);
                             if (findUser?.password == user.password)
-                                return res.end(JSON.stringify({ message: "User successfully Logined !", status: 200, accessToken: createToken({ user_id: findUser.id, userAgent: req.headers["user-agent"] }) }));
+                                return res.end(JSON.stringify({ message: "User successfully Logined !", status: 200, accessToken: createToken({ user_id: findUser.user_id, userAgent: req.headers["user-agent"] }) }));
                             else
                                 throw new errors_1.ClientError("User not found !", 404);
                         }

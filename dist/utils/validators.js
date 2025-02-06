@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.todoValidator = exports.loginValidator = exports.registerValidator = void 0;
+exports.todoValidation = exports.todoValidator = exports.loginValidator = exports.registerValidator = void 0;
+const controller_dto_1 = require("../controllers/controller.dto");
 const errors_1 = require("./errors");
 const emailRegex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 const passwordRegex = /^(?=[A-Za-z0-9]{4,10}$)[A-Za-z0-9]+$/;
@@ -43,3 +44,26 @@ const todoValidator = (todo) => {
     return true;
 };
 exports.todoValidator = todoValidator;
+class todoValidation extends controller_dto_1.ValidationTodo {
+    validation_create(todo) { }
+    validation_edit(todo) { }
+    constructor() {
+        super();
+        this.validation_create = (todo) => {
+            if (!(todo.todo_title))
+                throw new errors_1.ClientError("Todo title is requered !", 400);
+            return true;
+        };
+        this.validation_edit = (todo) => {
+            const { todo_title, isComplate } = todo;
+            if (!todo_title)
+                throw new errors_1.ClientError("Todo title is requered !", 400);
+            if (!isComplate)
+                throw new errors_1.ClientError("Complate is requered !", 400);
+            if (isComplate > 2 || isComplate < 1)
+                throw new errors_1.ClientError("Complate value is invalid !", 400);
+            return true;
+        };
+    }
+}
+exports.todoValidation = todoValidation;

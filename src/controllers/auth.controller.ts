@@ -25,15 +25,16 @@ class AuthController extends Auth {
                         const validator = registerValidator(user);
 
                         if (validator) {
-                            let users: User[] = await readFile("users.json")
+                            let users: User[] = await readFile("users.json");
+
                             if (users.some((client: User) => client.email == user.email)) throw new ClientError("It's user already exists", 400);
                             user = {id: users.length ? (((users as User[]).at(-1) as User).id as number) + 1 : 1, ...user };
                             users.push(user);
                             let writeUser: boolean = await writeFile("users.json", users);
-                            if (writeUser) return res.end(JSON.stringify({ message: "User successfully registered !", status: 201, accessToken: createToken({ user_id: user.user_id, userAgent: req.headers["user-agent"] }) }));
+                            if (writeUser) return res.end(JSON.stringify({ message: "User successfully registered !", status: 201, accessToken: createToken({ user_id: user.id, userAgent: req.headers["user-agent"] }) }));
                             else throw new ServerError("user not saved yet !");
-                        }
-                        return res.end(JSON.stringify({ status: "Success" }));
+                        };
+
                     } catch (error) {
                         let err: MyError = {
                             message: (error as MyError).message,
@@ -64,7 +65,7 @@ class AuthController extends Auth {
                             let users:User[] = await readFile("users.json");
                             let findUser = users.find((client:User) => client.email == (user as User).email);
                             if(!findUser) throw new ClientError("User not found !", 404);
-                            if(findUser?.password == (user as User).password) return res.end(JSON.stringify({ message: "User successfully Logined !", status: 200, accessToken: createToken({ user_id: (findUser as User).id, userAgent: req.headers["user-agent"] }) }));
+                            if(findUser?.password == (user as User).password) return res.end(JSON.stringify({ message: "User successfully Logined !", status: 200, accessToken: createToken({ user_id: (findUser as User).user_id , userAgent: req.headers["user-agent"] }) }));
                             else throw new ClientError("User not found !", 404);
                         }
 

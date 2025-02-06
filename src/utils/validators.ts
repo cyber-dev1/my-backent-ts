@@ -1,3 +1,4 @@
+import { ValidationTodo } from "../controllers/controller.dto";
 import { Todo, User } from "../types";
 import { ClientError } from "./errors";
 
@@ -28,3 +29,22 @@ export const todoValidator = (todo:Todo):boolean|void => {
     if(!todo_title) throw new ClientError('todo is Invalid', 400);
     return true;
 };
+
+export class todoValidation extends ValidationTodo {
+    validation_create(todo: Todo): boolean | void { }
+    validation_edit(todo: Todo): boolean | void { }
+    constructor() {
+        super()
+        this.validation_create = (todo: Todo): boolean | void => {
+            if (!(todo.todo_title)) throw new ClientError("Todo title is requered !", 400)
+            return true
+        }
+        this.validation_edit = (todo: Todo): boolean | void => {
+            const { todo_title, isComplate } = todo
+            if (!todo_title) throw new ClientError("Todo title is requered !", 400)
+            if (!isComplate) throw new ClientError("Complate is requered !", 400)
+            if (isComplate > 2 || isComplate < 1) throw new ClientError("Complate value is invalid !", 400)
+            return true
+        }
+    }
+}
