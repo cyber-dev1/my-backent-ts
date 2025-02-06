@@ -1,1 +1,17 @@
-[]
+[
+    {
+        "todo_title": "ogabek yaratgan todo",
+        "isComplate": 2,
+        "todo_id": 1
+    },
+    {
+        "todo_title": "ogabek is !dev",
+        "isComplate": 1,
+        "todo_id": 2
+    },
+    {
+        "todo_title": "uzbekiston",
+        "isComplate": 1,
+        "todo_id": 3
+    }
+]

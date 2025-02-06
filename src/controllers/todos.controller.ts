@@ -40,7 +40,6 @@ export class todosControllers extends TodoRequests {
                             const result: todoResultType = {
                                 message: "Todo is saved",
                                 status: 201,
-                                todo
                             }
                             res.statusCode = 201;
                             res.end(JSON.stringify(result));
@@ -92,7 +91,7 @@ export class todosControllers extends TodoRequests {
                 const todo_id: number = Number((req.url as string).trim().split("/").at(-1));
                 if (!todo_id) throw new ClientError("NOT FOUND", 404);
                 const find_index_todo: number = todos.findIndex((t: Todo) => t.todo_id == todo_id);
-                if (find_index_todo == -1) throw new ClientError("NOT FOUND", 404);
+                if (find_index_todo == -1) throw new ClientError("TODOS NOT FOUND", 404);
                 const token: string = req.headers.token as string;
                 const verify_token: JWTInterface = verifyToken(token) as JWTInterface;
                 const todo: Todo = todos[find_index_todo];
@@ -111,6 +110,43 @@ export class todosControllers extends TodoRequests {
                 GlobalError(res, (error as ErrorType));
             }
 
+        };
+        this.edit_todo = async function (req, res) {
+            try {
+                let todo_chunk: string = "";
+                req.on("data", (chunk) => { todo_chunk += chunk });
+                req.on("end", async () => {
+                    try {
+                        const change_todo: Todo = JSON.parse(todo_chunk);
+                        const todos: Todo[] = await (readTodo("todos.json")) as Todo[];
+                        const validation_todo: todoValidation = new todoValidation();
+                        if (validation_todo.validation_edit(change_todo)) {
+                            const todo_id: number = Number((req.url as string).trim().split("/").at(-1));
+                            if (!todo_id) throw new ClientError("NOT FOUND OGabek", 404);
+                            const find_index_todo: number = todos.findIndex((t: Todo) => t.todo_id == todo_id);
+                            if (find_index_todo == -1) throw new ClientError("ogabek's Todo NOT FOUND", 404);
+                            const token: string = req.headers.token as string;
+                            const verify_token: JWTInterface = verifyToken(token) as JWTInterface;
+                            const todo: Todo = todos[find_index_todo];
+                            if (todo.user_id != verify_token.user_id) throw new ClientError("Todo is not edit ogabek", 400);
+                            todo.todo_title = change_todo.todo_title;
+                            todo.isComplate = change_todo.isComplate;
+                            const save_todo: boolean | void = await writeTodo("todos.json", todos);
+                            if (!save_todo) throw new ServerError("Todo is not changed ogabek");
+                            const result: todoResultType = {
+                                message: "Todo is changed",
+                                status: 200,
+                            }
+                            res.statusCode = 200;
+                            res.end(JSON.stringify(result));
+                        }
+                    } catch (error) {
+                        GlobalError(res, (error as ErrorType));
+                    }
+                })
+            } catch (error) {
+                GlobalError(res, (error as ErrorType));
+            }
         }
     }
 };

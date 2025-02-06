@@ -44,7 +44,6 @@ class todosControllers extends controller_dto_1.TodoRequests {
                             const result = {
                                 message: "Todo is saved",
                                 status: 201,
-                                todo
                             };
                             res.statusCode = 201;
                             res.end(JSON.stringify(result));
@@ -103,7 +102,7 @@ class todosControllers extends controller_dto_1.TodoRequests {
                     throw new errors_1.ClientError("NOT FOUND", 404);
                 const find_index_todo = todos.findIndex((t) => t.todo_id == todo_id);
                 if (find_index_todo == -1)
-                    throw new errors_1.ClientError("NOT FOUND", 404);
+                    throw new errors_1.ClientError("TODOS NOT FOUND", 404);
                 const token = req.headers.token;
                 const verify_token = verifyToken(token);
                 const todo = todos[find_index_todo];
@@ -119,6 +118,49 @@ class todosControllers extends controller_dto_1.TodoRequests {
                 };
                 res.statusCode = 200;
                 res.end(JSON.stringify(result));
+            }
+            catch (error) {
+                (0, errors_1.GlobalError)(res, error);
+            }
+        };
+        this.edit_todo = async function (req, res) {
+            try {
+                let todo_chunk = "";
+                req.on("data", (chunk) => { todo_chunk += chunk; });
+                req.on("end", async () => {
+                    try {
+                        const change_todo = JSON.parse(todo_chunk);
+                        const todos = await ((0, readFile_1.readTodo)("todos.json"));
+                        const validation_todo = new validators_1.todoValidation();
+                        if (validation_todo.validation_edit(change_todo)) {
+                            const todo_id = Number(req.url.trim().split("/").at(-1));
+                            if (!todo_id)
+                                throw new errors_1.ClientError("NOT FOUND OGabek", 404);
+                            const find_index_todo = todos.findIndex((t) => t.todo_id == todo_id);
+                            if (find_index_todo == -1)
+                                throw new errors_1.ClientError("ogabek's Todo NOT FOUND", 404);
+                            const token = req.headers.token;
+                            const verify_token = verifyToken(token);
+                            const todo = todos[find_index_todo];
+                            if (todo.user_id != verify_token.user_id)
+                                throw new errors_1.ClientError("Todo is not edit ogabek", 400);
+                            todo.todo_title = change_todo.todo_title;
+                            todo.isComplate = change_todo.isComplate;
+                            const save_todo = await (0, writeFile_1.writeTodo)("todos.json", todos);
+                            if (!save_todo)
+                                throw new errors_1.ServerError("Todo is not changed ogabek");
+                            const result = {
+                                message: "Todo is changed",
+                                status: 200,
+                            };
+                            res.statusCode = 200;
+                            res.end(JSON.stringify(result));
+                        }
+                    }
+                    catch (error) {
+                        (0, errors_1.GlobalError)(res, error);
+                    }
+                });
             }
             catch (error) {
                 (0, errors_1.GlobalError)(res, error);

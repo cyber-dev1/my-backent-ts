@@ -27,6 +27,8 @@ const server = node_http_1.default.createServer(async (req, res) => {
                 return todos_controller_1.default.get_todos(req, res);
             if (reqUrl.startsWith("/api/todo/") && reqMethod == config_1.METHODS_ENUM.DELETE)
                 return todos_controller_1.default.delete_todo(req, res, reqUrl);
+            if (reqUrl.startsWith("/api/todos/") && reqMethod == config_1.METHODS_ENUM.UPDATE)
+                return todos_controller_1.default.edit_todo(req, res);
         }
         ;
     }

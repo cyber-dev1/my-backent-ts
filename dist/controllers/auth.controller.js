@@ -31,6 +31,7 @@ class AuthController extends controller_dto_1.Auth {
                             user = { id: users.length ? users.at(-1).id + 1 : 1, ...user };
                             users.push(user);
                             let writeUser = await (0, writeFile_1.writeFile)("users.json", users);
+                            res.writeHead(201, { "content-type": "application/json" });
                             if (writeUser)
                                 return res.end(JSON.stringify({ message: "User successfully registered !", status: 201, accessToken: createToken({ user_id: user.id, userAgent: req.headers["user-agent"] }) }));
                             else
