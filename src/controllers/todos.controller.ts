@@ -4,19 +4,21 @@ import { readFile, readTodo, } from "../models/readFile";
 import { JWTInterface, MyError, Todo, todoResultType, User } from "../types";
 import { ClientError, GlobalError, ServerError } from "../utils/errors";
 import { loginValidator, registerValidator, todoValidator } from "../utils/validators";
-import { Auth, Request, Response } from "./controller.dto";
+import { Auth, Request, Response, TodoRequests } from "./controller.dto";
 import { v4 as uuidv4, v4 } from "uuid";
 import { tokenService } from "../lib/jwt/jwt";
 import { writeTodo } from "../models/writeFile";
 const { createToken, verifyToken } = tokenService;
 
-export class todosControllers {
-    GET_TODOS: (req: Request, res: Response) => Promise<void>;
-    GET_TODO: (req: Request, res: Response, reqUrl: string) => Promise<void>;
-    POST_TODO: (req: Request, res: Response) => Promise<void>;
-    DELETE_TODO: (req: Request, res: Response, reqUrl: string) => void
+export class todosControllers extends TodoRequests {
+    get_todos(req: Request, res: Response): void {};
+    get_todo(req: Request, res: Response, reqUrl: string): void {};
+    post_todos(req: Request, res: Response): void {} ;
+    delete_todo(req: Request, res: Response, reqUrl: string): void {};
+    edit_todo(req: Request, res: Response): void {};
     constructor() {
-        this.POST_TODO = async function (req, res) {
+        super();
+        this.post_todos = async function (req, res) {
             try {
                 let newTodo: string = '';
                 req.on("data", (chunk) => {
@@ -62,7 +64,7 @@ export class todosControllers {
                 GlobalError(res, err);
             }
         };
-        this.GET_TODOS = async function (req, res) {
+        this.get_todos = async function (req, res) {
             try {
                 const todos: string | Todo[] = await readTodo("todos.json");
                 res.writeHead(200, { "content-type": "application/json" });
@@ -76,7 +78,7 @@ export class todosControllers {
                 GlobalError(res, err);
             }
         };
-        this.GET_TODO = async function (req, res, reqUrl) {
+        this.get_todo = async function (req, res, reqUrl) {
             try {
                 let id: string = reqUrl.split("/").at(-1) as string;
                 let todos: string | Todo[] = await readTodo("todos.json");
@@ -95,7 +97,7 @@ export class todosControllers {
                 GlobalError(res, err);
             }
         };
-        this.DELETE_TODO = async function (req, res, reqUrl) {
+        this.delete_todo = async function (req, res, reqUrl) {
             try {
                 try {
                     let todos: Todo[] = await readFile("todos.json") as Todo[];

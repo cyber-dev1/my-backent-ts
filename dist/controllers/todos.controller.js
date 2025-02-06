@@ -4,12 +4,24 @@ exports.todosControllers = void 0;
 const readFile_1 = require("../models/readFile");
 const errors_1 = require("../utils/errors");
 const validators_1 = require("../utils/validators");
+const controller_dto_1 = require("./controller.dto");
 const jwt_1 = require("../lib/jwt/jwt");
 const writeFile_1 = require("../models/writeFile");
 const { createToken, verifyToken } = jwt_1.tokenService;
-class todosControllers {
+class todosControllers extends controller_dto_1.TodoRequests {
+    get_todos(req, res) { }
+    ;
+    get_todo(req, res, reqUrl) { }
+    ;
+    post_todos(req, res) { }
+    ;
+    delete_todo(req, res, reqUrl) { }
+    ;
+    edit_todo(req, res) { }
+    ;
     constructor() {
-        this.POST_TODO = async function (req, res) {
+        super();
+        this.post_todos = async function (req, res) {
             try {
                 let newTodo = '';
                 req.on("data", (chunk) => {
@@ -57,7 +69,7 @@ class todosControllers {
                 (0, errors_1.GlobalError)(res, err);
             }
         };
-        this.GET_TODOS = async function (req, res) {
+        this.get_todos = async function (req, res) {
             try {
                 const todos = await (0, readFile_1.readTodo)("todos.json");
                 res.writeHead(200, { "content-type": "application/json" });
@@ -72,7 +84,7 @@ class todosControllers {
                 (0, errors_1.GlobalError)(res, err);
             }
         };
-        this.GET_TODO = async function (req, res, reqUrl) {
+        this.get_todo = async function (req, res, reqUrl) {
             try {
                 let id = reqUrl.split("/").at(-1);
                 let todos = await (0, readFile_1.readTodo)("todos.json");
@@ -93,7 +105,7 @@ class todosControllers {
                 (0, errors_1.GlobalError)(res, err);
             }
         };
-        this.DELETE_TODO = async function (req, res, reqUrl) {
+        this.delete_todo = async function (req, res, reqUrl) {
             try {
                 try {
                     let todos = await (0, readFile_1.readFile)("todos.json");

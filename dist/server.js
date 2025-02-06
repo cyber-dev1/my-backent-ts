@@ -20,19 +20,15 @@ const server = node_http_1.default.createServer(async (req, res) => {
             return auth_controller_1.default.login(req, res);
         if (await (0, checkToken_1.checkToken)(req, res)) {
             if (reqUrl.startsWith('/api/todos/create') && reqMethod == config_1.METHODS_ENUM.CREATE)
-                return todos_controller_1.default.POST_TODO(req, res);
+                return todos_controller_1.default.post_todos(req, res);
             if (reqUrl.startsWith('/api/todos/') && reqMethod == config_1.METHODS_ENUM.READ)
-                return todos_controller_1.default.GET_TODO(req, res, reqUrl);
+                return todos_controller_1.default.get_todo(req, res, reqUrl);
             if (reqUrl.startsWith('/api/todos') && reqMethod == config_1.METHODS_ENUM.READ)
-                return todos_controller_1.default.GET_TODOS(req, res);
-            if (reqUrl.startsWith('/api/todos') && reqMethod == config_1.METHODS_ENUM.READ)
-                return todos_controller_1.default.GET_TODOS(req, res);
+                return todos_controller_1.default.get_todos(req, res);
             if (reqUrl.startsWith("/api/todo/") && reqMethod == config_1.METHODS_ENUM.DELETE)
-                return todos_controller_1.default.DELETE_TODO(req, res, reqUrl);
+                return todos_controller_1.default.delete_todo(req, res, reqUrl);
         }
         ;
-        if (reqUrl.startsWith('/api/todos/create') && reqMethod == config_1.METHODS_ENUM.CREATE)
-            return todos_controller_1.default.POST_TODO(req, res);
     }
     else
         return res.end(JSON.stringify({ message: "Invalid URL", status: 404 }));
