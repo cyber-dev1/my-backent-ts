@@ -6,3 +6,4 @@ exports.tokenService = {
     createToken: (payload) => (0, jsonwebtoken_1.sign)(payload, process.env.TOKEN_KEY, { expiresIn: "7d" }),
     verifyToken: (token) => (0, jsonwebtoken_1.verify)(token, process.env.TOKEN_KEY)
 };
+
