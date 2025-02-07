@@ -1,7 +1,6 @@
 import { IncomingMessage, ServerResponse } from "node:http";
 import { Todo } from "../types";
 
-
 export type Request = IncomingMessage ;
 export type Response = ServerResponse<Request> ;
 

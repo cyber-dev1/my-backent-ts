@@ -5,19 +5,5 @@
         "last_name": "norqulov",
         "email": "ogabek@gmail.com",
         "password": "ogabek"
-    },
-    {
-        "id": 2,
-        "first_name": "binali",
-        "last_name": "binali",
-        "email": "binali@gmail.com",
-        "password": "binali"
-    },
-    {
-        "id": 3,
-        "first_name": "shamsiddin",
-        "last_name": "xamroqulov",
-        "email": "uzb@gmail.com",
-        "password": "shamsiddin"
     }
 ]

@@ -97,7 +97,11 @@ export class todosControllers extends TodoRequests {
                 const todo: Todo = todos[find_index_todo];
                 if (todo.user_id != verify_token.user_id) throw new ClientError("Todo is not deleted", 400);
                 todos.splice(find_index_todo, 1);
-                const delete_todo: boolean | void = await writeTodo("todos.json", todos);
+                const updatedTodos = todos.map((todo, index) => ({
+                    ...todo,
+                    todo_id: index + 1 // ID larni yangilash
+                }));
+                const delete_todo: boolean | void = await writeTodo("todos.json", updatedTodos);
                 if (!delete_todo) throw new ServerError("Todo is not deleted");
                 const result: todoResultType = {
                     message: "Todo is deleted",
