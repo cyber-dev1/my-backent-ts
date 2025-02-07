@@ -1,7 +1,8 @@
 [
     {
-        "todo_title": "ogabek ning todosi",
-        "isComplate": 1,
-        "todo_id": 1
+        "todo_title": "binali",
+        "isComplate": 2,
+        "todo_id": 1,
+        "user_id": 2
     }
 ]

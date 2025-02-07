@@ -99,7 +99,7 @@ export class todosControllers extends TodoRequests {
                 todos.splice(find_index_todo, 1);
                 const updatedTodos = todos.map((todo, index) => ({
                     ...todo,
-                    todo_id: index + 1 // ID larni yangilash
+                    todo_id: index + 1
                 }));
                 const delete_todo: boolean | void = await writeTodo("todos.json", updatedTodos);
                 if (!delete_todo) throw new ServerError("Todo is not deleted");

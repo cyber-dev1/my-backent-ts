@@ -28,12 +28,16 @@ class AuthController extends controller_dto_1.Auth {
                             let users = await (0, readFile_1.readFile)("users.json");
                             if (users.some((client) => client.email == user.email))
                                 throw new errors_1.ClientError("It's user already exists", 400);
-                            user = { id: users.length ? users.at(-1).id + 1 : 1, ...user };
+                            user = {
+                                id: users.length ? users.at(-1).id + 1 : 1,
+                                user_id: users.length ? users.at(-1).id + 1 : 1,
+                                ...user
+                            };
                             users.push(user);
                             let writeUser = await (0, writeFile_1.writeFile)("users.json", users);
                             res.writeHead(201, { "content-type": "application/json" });
                             if (writeUser)
-                                return res.end(JSON.stringify({ message: "User successfully registered !", status: 201, accessToken: createToken({ user_id: user.id, userAgent: req.headers["user-agent"] }) }));
+                                return res.end(JSON.stringify({ message: "User successfully registered !", status: 201, accessToken: createToken({ user_id: user.user_id, userAgent: req.headers["user-agent"] }) }));
                             else
                                 throw new errors_1.ServerError("user not saved yet !");
                         }

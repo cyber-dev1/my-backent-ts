@@ -111,7 +111,7 @@ class todosControllers extends controller_dto_1.TodoRequests {
                 todos.splice(find_index_todo, 1);
                 const updatedTodos = todos.map((todo, index) => ({
                     ...todo,
-                    todo_id: index + 1 // ID larni yangilash
+                    todo_id: index + 1
                 }));
                 const delete_todo = await (0, writeFile_1.writeTodo)("todos.json", updatedTodos);
                 if (!delete_todo)
