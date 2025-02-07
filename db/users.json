@@ -1,18 +1,3 @@
 [
-    {
-        "id": 1,
-        "user_id": 1,
-        "first_name": "ogabek",
-        "last_name": "norqulov",
-        "email": "ogabek@gmail.com",
-        "password": "ogabek"
-    },
-    {
-        "id": 2,
-        "user_id": 2,
-        "first_name": "binali",
-        "last_name": "binaliyev",
-        "email": "binali@gmail.com",
-        "password": "binali"
-    }
+    
 ]
