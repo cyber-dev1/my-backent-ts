@@ -8,11 +8,25 @@ const config_1 = require("./config");
 const auth_controller_1 = __importDefault(require("./controllers/auth.controller"));
 const checkToken_1 = require("./models/checkToken");
 const todos_controller_1 = __importDefault(require("./controllers/todos.controller"));
+const rate_limiter_flexible_1 = require("rate-limiter-flexible");
 const { PORT } = config_1.ServerConfiguration;
+const LimitReq = new rate_limiter_flexible_1.RateLimiterMemory({
+    points: 2,
+    duration: 6,
+});
 const server = node_http_1.default.createServer(async (req, res) => {
     const reqUrl = req.url.trim().toLocaleLowerCase();
     const reqMethod = req.method.trim().toUpperCase();
     res.setHeader("Content-type", "application/json");
+    let userId = req.headers.authorization || req.socket.remoteAddress || "anonymous";
+    try {
+        await LimitReq.consume(userId);
+    }
+    catch (error) {
+        res.writeHead(429, { "content-type": "application/json" });
+        return res.end(JSON.stringify({ message: "Too many request", status: 429 }));
+    }
+    ;
     if (reqUrl.startsWith('/api')) {
         if (reqUrl.startsWith('/api/auth/register') && reqMethod == config_1.METHODS_ENUM.CREATE)
             return auth_controller_1.default.register(req, res);
